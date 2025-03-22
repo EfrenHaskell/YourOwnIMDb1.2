@@ -242,12 +242,13 @@ def actors_marvel_warner():
     # >>>> TODO 12: Find the actors who have played a role in both “Marvel” and “Warner Bros” productions. <<<<
     #               List the `actor names` and the corresponding `motion picture names`.
 
-    select = "SELECT P.name, MP.name, MP.production"
-    from_table = "FROM People P, Role R, MotionPicture MP"
-    where = "WHERE MP.id = R.mpid AND R.pid = P.id AND R.role_name = 'Actor'"
-    group_by = "GROUP BY P.name HAVING MP.production = 'Marvel' AND MP.production = 'Warner Bros'"
+    select = "SELECT P.name, CONCAT(MP.name, ', ', MP2.name)"
+    from_table = "FROM People P, Role R, Role R1, MotionPicture MP, MotionPicture MP2"
+    where = "WHERE MP.id = R.mpid AND R.pid = P.id AND R.role_name = 'Actor' AND "
+    where2 = "MP.production = 'Marvel' AND MP2.production = 'Warner Bros' AND"
+    where3 = "R1.pid = P.id AND R.role_name = 'Actor' AND R1.mpid = MP2.id"
 
-    query = f"{select} {from_table} {where}"
+    query = f"{select} {from_table} {where} {where2} {where3}"
 
     with Database() as db:
         results = db.execute(query)
